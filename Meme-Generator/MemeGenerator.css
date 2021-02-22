@@ -1,0 +1,100 @@
+h1 {
+    color:navy;
+    text-align: center;
+   
+}
+
+.memeForm {
+    text-align: center;
+}
+
+body{
+    background-color: whitesmoke;
+}
+
+.textInput {
+    display: inline-block;
+width: 50%;
+padding: 10px;
+text-align: center;
+border: none ;
+padding: 5px;
+border-radius: 10px;
+margin: 10px;
+box-shadow: 5px 5px 5px 4px rgb(223, 223, 223);
+}
+
+#createBtn {
+    width: 100px;
+border:none;
+padding: 5px;
+    border-radius: 10px;
+    color: white;
+    background-color: rgb(26, 77, 245);
+}
+
+#createBtn:hover {
+background-color: rgb(116, 165, 255);
+color: black;
+}
+
+#fillOut {
+    text-align: center;
+}
+
+img {
+    height: 400px;
+    width: 400px;
+}
+
+.Memes {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    height: 400px;
+    width: 400px;
+    text-align: center;
+    margin: 10px;
+}
+
+.remove {
+position: absolute;
+display: inline-block;
+top: 0px;
+right: -35px;
+margin: -2px ;
+color: black;
+background-color:whitesmoke;
+border-radius: 12px ;
+font-size: 12px;
+}
+
+.remove:hover{
+    color: red;
+    background-color: white;
+}
+
+.TopText {
+    position: absolute;
+    display: inline-block;
+    top: 5px;
+    color: white;
+    text-shadow: 5px 5px black;
+    margin: auto;
+    font-size: 45px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.BottomText {
+    position: absolute;
+    /* display: inline; */
+    bottom: 5px;
+    color: white;
+    text-shadow: 5px 5px black;
+    /* text-align: center; */
+    /* margin:0 auto; */
+    font-size: 45px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+} 
