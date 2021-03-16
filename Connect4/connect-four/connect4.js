@@ -5,8 +5,8 @@
  * board fills (tie)
  */
 
-const WIDTH = 7;
-const HEIGHT = 6;
+const WIDTH = 7;//column
+const HEIGHT = 6;//row
 
 let currPlayer = 1; // active player: 1 or 2
 const board = []; // array of rows, each row is array of cells  (board[y][x])
@@ -17,8 +17,8 @@ const board = []; // array of rows, each row is array of cells  (board[y][x])
 
 function makeBoard() {
   // TODO: set "board" to empty HEIGHT x WIDTH matrix array
-  for (let y = 0; y < HEIGHT; y++){
-    board.push(Array.from({length: WIDTH}));
+  for (let y = 0; y < HEIGHT; y++){//loop through the height 
+    board.push(Array.from({length: WIDTH}));//and set the length for each row to be equal to the width value
   }
 }
 
@@ -33,7 +33,7 @@ let htmlBoard = document.getElementById("board")
   top.setAttribute("id", "column-top");//setting the id for the top row to be "column-top"
   top.addEventListener("click", handleClick);//adding a click event listener to the top row
 
-  for (let x = 0; x < WIDTH; x++) { //creating a loop over the WIDTH/row of the table
+  for (let x = 0; x < WIDTH; x++) { //creating a loop over the WIDTH/column of the table
     let headCell = document.createElement("td");//creating a table data element for the first cells
     headCell.setAttribute("id", x);//setting the head cells id to be "x"
     top.append(headCell);//appending the head cells to the top row
@@ -41,9 +41,9 @@ let htmlBoard = document.getElementById("board")
   htmlBoard.append(top);//appending the top row to the html board
 
   // TODO: add comment for this code
-  for (let y = 0; y < HEIGHT; y++) {//looping over the height/column  of the table
-    const row = document.createElement("tr");//creating a table row element for each column
-    for (let x = 0; x < WIDTH; x++) {//looping over the width/row of the table
+  for (let y = 0; y < HEIGHT; y++) {//looping over the height/rows of the table
+    const row = document.createElement("tr");//creating a table row element for each row
+    for (let x = 0; x < WIDTH; x++) {//looping over the width/columns of the table
       const cell = document.createElement("td");//creating table data cells in each row
       cell.setAttribute("id", `${y}-${x}`);//setting the cells id to be "y-x"
       row.append(cell);//appending each cell to the row
@@ -69,10 +69,10 @@ function findSpotForCol(x) {
 function placeInTable(y, x) {
   // TODO: make a div and insert into correct table cell
   const newDiv = document.createElement("div");//creating a div element
-  newDiv.classList.add("piece");//add the class "piece" ti the div
+  newDiv.classList.add("piece");//add the class "piece" to the div
   newDiv.classList.add(`p${currPlayer}`);//add the class "p1" or "p2" depending on the value of the current player
   
-const clickedCell = document.getElementById(`${y}-${x}`);//setting the clicked cell id to be the x and y value of that clicked cell
+const clickedCell = document.getElementById(`${y}-${x}`);//pulling the id for that clicked cell
 
 clickedCell.append(newDiv)
 }
