@@ -16,14 +16,14 @@ $body.on("click", "#nav-all", navAllStories);
 
 // Show story submit form on click of "submit"
 
-function navSubmitStoryClick(evt){
+function navSubmitStoryClick(evt) {
   console.debug("navSubmitStoryClick", evt);
   hidePageComponents();
   $allStoriesList.show();
   $submitForm.show();
 }
 
-$navSubmitStory.on("click", nsvSubmitStoryClick);
+$navSubmitStory.on("click", navSubmitStoryClick);
 
 // Show favorite stories on click of "favorites"
 
@@ -33,7 +33,7 @@ function navFavoritesClick(evt){
   putFavoritesListOnPage();
 }
 
-$body.on("click", "#nav-favorites", navFacoritesClick);
+$body.on("click", "#nav-favorites", navFavoritesClick);
 
 // Show my stories when clicking on "my stories"
 
