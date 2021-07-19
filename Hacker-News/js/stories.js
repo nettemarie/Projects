@@ -102,8 +102,8 @@ async function submitNewStory(evt){
 
   // grab info from form
   const title = $("#create-title").val();
-  const url = ("#create-url").val();
-  const author = $("create-author").val();
+  const url = $("#create-url").val();
+  const author = $("#create-author").val();
   const username = currentUser.username;
   const storyData = {title, url, author, username};
 
@@ -128,11 +128,11 @@ function putUserStoriesOnPage(){
 
   $ownStories.empty();
 
-  if(currentUser.$ownStories.length === 0){
+  if(currentUser.ownStories.length === 0){
     $ownStories.append("<h5>No stories added by user yet!</h5>");
   }else{
     // loop through all users stories and generate HTML from them
-    for(let story of currentUser.$ownStories){
+    for(let story of currentUser.ownStories){
       let $story = generateStoryMarkup(story, true);
       $ownStories.append($story);
     }
