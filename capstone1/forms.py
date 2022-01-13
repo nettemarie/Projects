@@ -1,19 +1,48 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import Length, InputRequired
 
 
 class SignUpForm(FlaskForm):
     """Sign Up form"""
 
-    first_name = StringField("First Name", validators=[DataRequired()])
-    last_name = StringField("Last Name", validators=[DataRequired()])
-    username = StringField("Username", validators=[DataRequired()])
-    password = PasswordField("Password", validators=[Length(min=6)])
+    username = StringField(
+        "Username",
+        validators=[InputRequired(), Length(min=1, max=20)],
+    )
+    password = PasswordField(
+        "Password",
+        validators=[InputRequired(), Length(min=6, max=55)],
+    )
+    first_name = StringField(
+        "First Name",
+        validators=[InputRequired(), Length(max=30)],
+    )
+    last_name = StringField(
+        "Last Name",
+        validators=[InputRequired(), Length(max=30)],
+    )
 
 
 class LoginForm(FlaskForm):
-    """Login form."""
+    """Login form"""
 
-    username = StringField("Username", validators=[DataRequired()])
-    password = PasswordField("Password", validators=[Length(min=6)])
+    username = StringField(
+        "Username",
+        validators=[InputRequired(), Length(min=1, max=20)],
+    )
+    password = PasswordField(
+        "Password",
+        validators=[InputRequired(), Length(min=6, max=55)],
+    )
+
+
+class SearchForm(FlaskForm):
+    """Search form"""
+
+    artist = StringField("Artist")
+    title = StringField("Title")
+
+
+class DeleteForm(FlaskForm):
+    """Delete form -- this form is intentionally blank."""
