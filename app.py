@@ -1,12 +1,10 @@
-import os, sys
+import os
 
-# from flask.json import jsonify
 import requests
 from flask import Flask, redirect, session, render_template, flash
-from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import SignUpForm, LoginForm, DeleteForm, SearchForm
+from forms import SignUpForm, LoginForm, SearchForm
 from models import db, connect_db, User
 from werkzeug.exceptions import Unauthorized
 

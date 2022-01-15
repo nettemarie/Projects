@@ -42,7 +42,3 @@ class SearchForm(FlaskForm):
 
     artist = StringField("Artist")
     title = StringField("Title")
-
-
-class DeleteForm(FlaskForm):
-    """Delete form -- this form is intentionally blank."""
