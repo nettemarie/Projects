@@ -1,39 +1,25 @@
 import os
 from unittest import TestCase
-from sqlalchemy import exc
-from flask import session
+
 from models import db, User
-from forms import SignUpForm, LoginForm, DeleteForm, SearchForm
-import requests
+
 from app import app
+
 
 os.environ["DATABASE_URL"] = "postgresql:///lyricly_test"
 
 
-db.create_all()
+app.config["TESTING"] = True
 
 
-class UserModelTestCase(TestCase):
-    """Test user registration"""
-
+class LyriclyTestCase(TestCase):
     def setUp(self):
         # """Create test user"""
         db.drop_all()
         db.create_all()
 
-        self.client = app.test_client()
-        app.app_context()
-        app.config["TESTING"] = True
-
-    def tearDown(self):
-        res = super().tearDown()
-        db.session.rollback()
-        return res
-
-    def test_user_model(self):
-
-        u = User(
-            username="testuser1",
+        u = User.register(
+            username="testuser",
             first_name="Test",
             last_name="User",
             password="password",
@@ -42,48 +28,99 @@ class UserModelTestCase(TestCase):
         db.session.add(u)
         db.session.commit()
 
-        self.assertEqual(u.username, "testuser1")
+        self.client = app.test_client()
 
-    # def test_login(self):
+    def tearDown(self):
+        res = super().tearDown()
+        db.session.rollback()
+        return res
 
-    #     # with app.test_client() as client:
-    #         username = "testuser"
-    #         password = "password"
+    def test_user_model(self):
 
-    #         user = User.authenticate(username, password)
-    #         # res = client.post("/login", data=user, follow_redirects=True)
-    #         # html = res.get_data(as_text=True)
+        user = User(
+            username="testuser1",
+            first_name="Test",
+            last_name="User",
+            password="password",
+        )
 
-    #     # with app.test_client() as client:
+        db.session.add(user)
+        db.session.commit()
 
-    #     #     resp = client.get("/redirect-me")
+        self.assertEqual(user.username, "testuser1")
 
-    #     # self.assertEqual(resp.status_code, 302)
-
-    #     self.assertIn(username, session)
-
-    def test_api_request(self):
+    def test_lyrics_on_page(self):
 
         with app.test_client() as client:
 
-            form = SearchForm()
-
-            artist = form.artist.data
-            title = form.title.data
-
-            resp = client.get(
-                f"https://api.lyrics.ovh/v1/{artist}/{title}",
-                params={"artist": artist, "title": title},
+            res = client.post(
+                "/",
+                data={"artist": "maverick city music", "title": "communion"},
+                follow_redirects=True,
             )
 
-            html = resp.get_data(as_text=True)
+            html = res.get_data(as_text=True)
 
-            results = resp.json()
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("communion", html)
 
-            for lyric in results.values():
-                res = lyric
+    def test_authorization(self):
 
-            lyrics = res.split("\n")
+        with app.test_client() as client:
 
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn(lyrics, html)
+            res = client.get("/users/username", follow_redirects=True)
+            html = res.get_data(as_text=True)
+
+            self.assertIn("Unauthorized", html)
+
+    def test_registration(self):
+        """Test user registration"""
+
+        with app.test_client() as client:
+
+            u = User.register(
+                username="testuser1",
+                first_name="Test",
+                last_name="User",
+                password="password",
+            )
+
+            db.session.add(u)
+            db.session.commit()
+
+            username = "testuser1"
+            password = "password"
+
+            user = User.authenticate(username, password)
+
+            res = client.post(
+                "/register",
+                data={"username": "testuser1", "password": "password"},
+                follow_redirects=True,
+            )
+
+            html = res.get_data(as_text=True)
+
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("testuser1", html)
+
+    def test_login(self):
+        """Test user login"""
+
+        with app.test_client() as client:
+
+            username = "testuser"
+            password = "password"
+
+            user = User.authenticate(username, password)
+
+            res = client.post(
+                "/login",
+                data={"username": "testuser", "password": "password"},
+                follow_redirects=True,
+            )
+
+            html = res.get_data(as_text=True)
+
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("testuser", html)

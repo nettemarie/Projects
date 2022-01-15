@@ -48,8 +48,6 @@ def homepage():
             if lyrics == "['No lyrics found']":
                 noLyrics = "No lyrics found"
 
-            print(lyrics)
-
             return render_template(
                 "search.html",
                 form=form,
