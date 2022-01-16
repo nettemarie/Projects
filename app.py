@@ -2,7 +2,6 @@ import os
 
 import requests
 from flask import Flask, redirect, session, render_template, flash
-from sqlalchemy.exc import IntegrityError
 
 from forms import SignUpForm, LoginForm, SearchForm
 from models import db, connect_db, User
@@ -13,7 +12,8 @@ app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL", "postgresql:///lyricly"
-)
+).replace("postgres://", "postgresql://", 1)
+
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "Purpose")
@@ -87,7 +87,7 @@ def register():
 
             session["username"] = user.username
 
-        except IntegrityError as e:
+        except:
             flash("Username already taken", "danger")
             return render_template("register.html", form=form)
 
