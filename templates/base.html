@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Lyricly</title>
+</head>
+<body>
+    <nav class="navbar">
+        
+        <ul class="navbar-nav">
+            <li>
+                <a id="lyricly" class="navbar-brand" href="/">Lyricly</a>
+            
+             id="new" class="login">
+                {% if 'username' in session %}
+                <li><a class="nav-link" href="/logout">Logout</a></li>
+                {% else %}
+                <li><a id="register" class="nav-link" href="/register">Sign Up</a></li>
+                <li><a class="nav-link" href="/login">Login</a></li>
+                {% endif %}
+            
+        </ul>
+    </nav>
+
+    <div class="flash-messages">
+        {% for category, message in get_flashed_messages(with_categories=True) %}
+        <div id="{{ category }}">{{ message }}</div>
+        {% endfor %}
+    
+        {% block content %}
+        
+        {% endblock %}
+    </div>
+
+    
+</body>
+</html>
