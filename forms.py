@@ -40,5 +40,5 @@ class LoginForm(FlaskForm):
 class SearchForm(FlaskForm):
     """Search form"""
 
-    artist = StringField("Artist")
-    title = StringField("Title")
+    artist = StringField("Artist", validators=[InputRequired()])
+    title = StringField("Title", validators=[InputRequired()])
