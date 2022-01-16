@@ -1,12 +1,9 @@
-import os, sys
+import os
 
-# from flask.json import jsonify
 import requests
 from flask import Flask, redirect, session, render_template, flash
-from flask_debugtoolbar import DebugToolbarExtension
-from sqlalchemy.exc import IntegrityError
 
-from forms import SignUpForm, LoginForm, DeleteForm, SearchForm
+from forms import SignUpForm, LoginForm, SearchForm
 from models import db, connect_db, User
 from werkzeug.exceptions import Unauthorized
 
@@ -15,7 +12,8 @@ app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL", "postgresql:///lyricly"
-)
+).replace("postgres://", "postgresql://", 1)
+
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "Purpose")
@@ -89,7 +87,7 @@ def register():
 
             session["username"] = user.username
 
-        except IntegrityError as e:
+        except:
             flash("Username already taken", "danger")
             return render_template("register.html", form=form)
 
@@ -134,29 +132,38 @@ def user(username):
 
     user = User.query.get(username)
     form = SearchForm()
+    artist = form.artist.data
+    title = form.title.data
 
     if form.validate_on_submit():
-        artist = (form.artist.data).title()
-        title = (form.title.data).title()
 
-        resps = requests.get(f"https://api.lyrics.ovh/v1/{artist}/{title}")
+        if artist and title:
 
-        results = resps.json()
+            resps = requests.get(f"https://api.lyrics.ovh/v1/{artist}/{title}")
 
-        for lyric in results.values():
-            res = lyric
+            results = resps.json()
 
-        lyrics = res.split("\n")
+            for lyric in results.values():
+                res = lyric
 
-        return render_template(
-            "search.html",
-            user=user,
-            form=form,
-            artist=artist,
-            resps=resps,
-            title=title,
-            lyrics=lyrics,
-        )
+            lyrics = res.split("\n")
+
+            if lyrics == "['No lyrics found']":
+                noLyrics = "No lyrics found"
+
+            return render_template(
+                "search.html",
+                user=user,
+                form=form,
+                artist=artist.title(),
+                resps=resps,
+                title=title.title(),
+                lyrics=lyrics,
+            )
+
+        else:
+            flash("Must enter an artist and title", "danger")
+            return render_template("search.html", form=form)
 
     else:
         return render_template("search.html", form=form)

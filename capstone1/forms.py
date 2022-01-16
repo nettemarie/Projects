@@ -40,9 +40,5 @@ class LoginForm(FlaskForm):
 class SearchForm(FlaskForm):
     """Search form"""
 
-    artist = StringField("Artist")
-    title = StringField("Title")
-
-
-class DeleteForm(FlaskForm):
-    """Delete form -- this form is intentionally blank."""
+    artist = StringField("Artist", validators=[InputRequired()])
+    title = StringField("Title", validators=[InputRequired()])
