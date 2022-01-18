@@ -1,6 +1,6 @@
 # Meme-Generator
 
-An early assessment of HTML, CSS, and Javascript. This project also involved using DOM manipulation to append and remove images from the screen.
+An early assessment of HTML, CSS, and Javascript. This project also involved using DOM manipulation to append and remove images from the page.
 
 # #Requirements:
 
