@@ -4,7 +4,7 @@ Welcome to my first Capstone project!
 https://lyricly-capstone.herokuapp.com/
 
 ## Description
-Lyricly is a website that allows you to search for lyrics using the lyrics.ovh api. My stretch goal was to implement sign up/login functionality. This proved difficult but I was able to complete my goal. This is the first of many projects to come!
+Lyricly is a website that allows you to search for lyrics using the lyrics.ovh API. My stretch goal was to implement sign up/login functionality. This proved difficult but I was able to complete my goal. This is the first of many projects to come!
 
 ## API
 https://lyricsovh.docs.apiary.io/#
