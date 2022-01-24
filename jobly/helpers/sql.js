@@ -1,18 +1,17 @@
-const { query } = require("express");
-const { DatabaseError } = require("pg-protocol");
 const { BadRequestError } = require("../expressError");
 
-// THIS NEEDS SOME GREAT DOCUMENTATION.
 // Function accepts two objects.
 // dataToUpdate includes the object with the data to send to the DatabaseError.
 // jsToSql includes the column names that will be updated.
 
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
-  // Pull keys from data then check if data was submitted
+  // get keys from data to update object
   const keys = Object.keys(dataToUpdate);
   if (keys.length === 0) throw new BadRequestError("No data");
 
-  // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
+  /* get an array of strings where each string is the corresponding db column name for each key
+   * set equal to the index-based parameter number for the sql command
+   * ex: {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2'] */
   const cols = keys.map(
     (colName, idx) => `"${jsToSql[colName] || colName}"=$${idx + 1}`
   );
@@ -30,30 +29,32 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 // Function accepts an object which includes the keys and values to filter companies by SQL query.
 // Returns a string that will be added to the sql query WHERE clause
 
-function sqlForCompaniesFilter(filter) {
+function getSqlWhereCompanyFilters(filter) {
   const { name, minEmployees, maxEmployees } = filter;
 
   let sqlFilter = "";
-  // if a filter exists, build WHERE clause
+  // If any filter exists, build WHERE Clause
   if (name || minEmployees || maxEmployees) {
-    //throw error if minEmployees > maxEmployees
+    // throw error if minEmployes > maxEmployees
     if (minEmployees && maxEmployees && minEmployees > maxEmployees) {
       throw new BadRequestError(
-        `minEmployees cannot be greater than maxEmployees`
+        `minEmployess cannot be greater than maxEmployees`
       );
     }
-
-    //Create SQL statement for each filter
+    // Create SQL statement for each filter as it would appear in WHERE Clause (if exists)
     let nameSql = name ? `name ILIKE '%${name}%'` : "";
     let minSql = minEmployees
-      ? `${nameSql ? "AND " : ""}num_employees >=${minEmployees}`
+      ? `${nameSql ? "AND " : ""}num_employees >= ${minEmployees}`
       : "";
     let maxSql = maxEmployees
       ? `${nameSql || minSql ? "AND " : ""}num_employees <= ${maxEmployees}`
       : "";
 
-    //Concatenate filter statementts into one WHERE clause string
-    sqlFilter = `WHERE ${nameSql} ${minSql} ${maxSql}`;
+    // Concatenate filter statements into one WHERE clause string
+    sqlFilter = `
+        WHERE
+          ${nameSql} ${minSql} ${maxSql}
+      `;
   }
   return sqlFilter;
 }
@@ -61,14 +62,14 @@ function sqlForCompaniesFilter(filter) {
 // Function accepts an object which includes the keys and values to filter companies by SQL query.
 // Returns a string that will be added to the sql query WHERE clause
 
-function sqlForJobsFilter(filter) {
+function getSqlWhereJobFilters(filter) {
   const { title, minSalary, hasEquity } = filter;
 
   let sqlFilter = "";
-  //if a filter exists, vuild WHERE clause
+  // If any filter exists, build WHERE Clause
   if (title || minSalary || hasEquity) {
-    //Create SQL statement for each filter
-    let titleSql = title ? `title ILIKE '%${title}%` : "";
+    // Create SQL statement for each filter as it would appear in WHERE Clause (if exists)
+    let titleSql = title ? `title ILIKE '%${title}%'` : "";
     let minSalarySql = minSalary
       ? `${titleSql ? "AND " : ""}salary >= ${minSalary}`
       : "";
@@ -76,14 +77,17 @@ function sqlForJobsFilter(filter) {
       ? `${titleSql || minSalarySql ? "AND " : ""}equity > 0`
       : "";
 
-    //Concatenate filter statements into one WHERE clause string
-    sqlFilter = `WHERE ${titleSql} ${minSalarySql} ${hasEquitySql}`;
+    // Concatenate filter statements into one WHERE clause string
+    sqlFilter = `
+        WHERE
+          ${titleSql} ${minSalarySql} ${hasEquitySql}
+      `;
   }
   return sqlFilter;
 }
 
 module.exports = {
   sqlForPartialUpdate,
-  sqlForCompaniesFilter,
-  sqlForJobsFilter,
+  getSqlWhereCompanyFilters,
+  getSqlWhereJobFilters,
 };

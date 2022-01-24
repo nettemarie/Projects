@@ -2,7 +2,10 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const { sqlForPartialUpdate } = require("../helpers/sql");
+const {
+  sqlForPartialUpdate,
+  getSqlWhereCompanyFilters,
+} = require("../helpers/sql");
 
 /** Related functions for companies. */
 
@@ -45,7 +48,7 @@ class Company {
    * */
 
   static async findAll(filter) {
-    const filterCompanies = sqlForCompaniesFilter(filter ? filter : {});
+    const sqlWhere = getSqlWhereCompanyFilters(filter ? filter : {});
 
     const companiesRes = await db.query(
       `SELECT handle,
@@ -54,7 +57,7 @@ class Company {
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
            FROM companies
-           ${filterCompanies}
+           ${sqlWhere}
            ORDER BY name`
     );
     return companiesRes.rows;
@@ -70,19 +73,37 @@ class Company {
 
   static async get(handle) {
     const companyRes = await db.query(
-      `SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-           FROM companies
-           WHERE handle = $1`,
+      `SELECT 
+        c.handle,
+        c.name,
+        c.num_employees AS "numEmployees",
+        c.description,
+        c.logo_url AS "logoUrl",
+        j.id,
+        j.title,
+        j.salary,
+        j.equity
+      FROM companies c
+      LEFT JOIN jobs j ON c.handle = j.company_handle
+      WHERE handle = $1`,
       [handle]
     );
 
-    const company = companyRes.rows[0];
+    const foundcompany = companyRes.rows[0];
+    if (!foundcompany) throw new NotFoundError(`No company: ${handle}`);
 
-    if (!company) throw new NotFoundError(`No company: ${handle}`);
+    let jobs = [];
+    if (companyRes.rows[0].id) {
+      jobs = companyRes.rows.map((r) => ({
+        id: r.id,
+        title: r.title,
+        salary: r.salary,
+        equity: r.equity,
+      }));
+    }
+
+    const { name, numEmployees, description, logoUrl } = foundcompany;
+    const company = { handle, name, numEmployees, description, logoUrl, jobs };
 
     return company;
   }

@@ -1,29 +1,28 @@
 const {
   sqlForPartialUpdate,
-  sqlForCompaniesFilter,
-  sqlForJobsFilter,
+  getSqlWhereCompanyFilters,
+  getSqlWhereJobFilters,
 } = require("./sql");
-
 const { BadRequestError } = require("../expressError");
 
 describe("sqlForPartialUpdate", function () {
-  test("test update", function () {
+  test("works", function () {
     const dataToUpdate = {
-      numEmployees: 20,
-      description: "my description",
+      numEmployess: 30,
+      logoUrl: "https://www.google.com/url",
     };
     const jsToSql = {
       numEmployees: "num_employees",
-      description: "description",
+      logoUrl: "logo_url",
     };
 
     const { setCols, values } = sqlForPartialUpdate(dataToUpdate, jsToSql);
-
-    expect(setCols).toEqual("'numEmployees'=$1, 'description'=$2");
-    expect(values).toEqual([30, "my description"]);
+    console.log(setCols);
+    expect(setCols).toEqual('"numEmployess"=$1, "logo_url"=$2');
+    expect(values).toEqual([30, "https://www.google.com/url"]);
   });
 
-  test("request with no data", async function () {
+  test("bad request with no data", async function () {
     try {
       sqlForPartialUpdate({});
       fail();
@@ -33,7 +32,7 @@ describe("sqlForPartialUpdate", function () {
   });
 });
 
-describe("sqlForCompaniesFilter", function () {
+describe("getSqlWhereCompanyFilters", function () {
   const testFilters = [
     {
       filterName: "allFilters",
@@ -123,7 +122,7 @@ describe("sqlForCompaniesFilter", function () {
   ];
   for (testFilter of testFilters) {
     test(`works: ${testFilter.filterName}`, function () {
-      const sqlWhere = sqlForCompaniesFilter(testFilter.filter);
+      const sqlWhere = getSqlWhereCompanyFilters(testFilter.filter);
       expect(sqlWhere.replace(/\s+/g, " ").trim()).toEqual(
         testFilter.expectedResult.replace(/\s+/g, " ").trim()
       );
@@ -143,7 +142,7 @@ describe("sqlForCompaniesFilter", function () {
   });
 });
 
-describe("sqlForJobsFilter", function () {
+describe("getSqlWhereJobFilters", function () {
   const testFilters = [
     {
       filterName: "allFilters",
@@ -233,7 +232,7 @@ describe("sqlForJobsFilter", function () {
   ];
   for (testFilter of testFilters) {
     test(`works: ${testFilter.filterName}`, function () {
-      const sqlWhere = sqlForJobsFilter(testFilter.filter);
+      const sqlWhere = getSqlWhereJobFilters(testFilter.filter);
       expect(sqlWhere.replace(/\s+/g, " ").trim()).toEqual(
         testFilter.expectedResult.replace(/\s+/g, " ").trim()
       );

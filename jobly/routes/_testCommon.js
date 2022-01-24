@@ -3,6 +3,7 @@
 const db = require("../db.js");
 const User = require("../models/user");
 const Company = require("../models/company");
+const Job = require("../models/job");
 const { createToken } = require("../helpers/tokens");
 
 async function commonBeforeAll() {
@@ -10,31 +11,49 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM users");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM companies");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM jobs");
 
-  await Company.create(
-      {
-        handle: "c1",
-        name: "C1",
-        numEmployees: 1,
-        description: "Desc1",
-        logoUrl: "http://c1.img",
-      });
-  await Company.create(
-      {
-        handle: "c2",
-        name: "C2",
-        numEmployees: 2,
-        description: "Desc2",
-        logoUrl: "http://c2.img",
-      });
-  await Company.create(
-      {
-        handle: "c3",
-        name: "C3",
-        numEmployees: 3,
-        description: "Desc3",
-        logoUrl: "http://c3.img",
-      });
+  await Company.create({
+    handle: "c1",
+    name: "C1",
+    numEmployees: 1,
+    description: "Desc1",
+    logoUrl: "http://c1.img",
+  });
+  await Company.create({
+    handle: "c2",
+    name: "C2",
+    numEmployees: 2,
+    description: "Desc2",
+    logoUrl: "http://c2.img",
+  });
+  await Company.create({
+    handle: "c3",
+    name: "C3",
+    numEmployees: 3,
+    description: "Desc3",
+    logoUrl: "http://c3.img",
+  });
+
+  await Job.create({
+    title: "Job1",
+    salary: 100000,
+    equity: 0,
+    companyHandle: "c1",
+  });
+  await Job.create({
+    title: "Job2",
+    salary: 80000,
+    equity: 0.1,
+    companyHandle: "c1",
+  });
+  await Job.create({
+    title: "Job3",
+    salary: 120000,
+    equity: 0,
+    companyHandle: "c2",
+  });
 
   await User.register({
     username: "u1",
@@ -74,9 +93,8 @@ async function commonAfterAll() {
   await db.end();
 }
 
-
 const u1Token = createToken({ username: "u1", isAdmin: false });
-
+const adminToken = createToken({ username: "u3", isAdmin: true });
 
 module.exports = {
   commonBeforeAll,
@@ -84,4 +102,5 @@ module.exports = {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  adminToken,
 };

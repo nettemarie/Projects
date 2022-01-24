@@ -86,9 +86,8 @@ describe("findAll", function () {
       },
     ]);
   });
-
-  test("works: filter name", async function () {
-    let compnanies = await Company.findAll({ name: "c2" });
+  test("works:  filter name", async function () {
+    let companies = await Company.findAll({ name: "c2" });
     expect(companies).toEqual([
       {
         handle: "c2",
@@ -99,7 +98,6 @@ describe("findAll", function () {
       },
     ]);
   });
-
   test("works:  filter minEmployees", async function () {
     let companies = await Company.findAll({ minEmployees: 2 });
     expect(companies).toEqual([
@@ -119,7 +117,6 @@ describe("findAll", function () {
       },
     ]);
   });
-
   test("works:  filter maxEmployees", async function () {
     let companies = await Company.findAll({ maxEmployees: 2 });
     expect(companies).toEqual([
@@ -144,7 +141,18 @@ describe("findAll", function () {
 /************************************** get */
 
 describe("get", function () {
-  test("works", async function () {
+  test("works: no jobs", async function () {
+    let company = await Company.get("c3");
+    expect(company).toEqual({
+      handle: "c3",
+      name: "C3",
+      numEmployees: 3,
+      description: "Desc3",
+      logoUrl: "http://c3.img",
+      jobs: [],
+    });
+  });
+  test("works: with jobs", async function () {
     let company = await Company.get("c1");
     expect(company).toEqual({
       handle: "c1",
@@ -152,6 +160,20 @@ describe("get", function () {
       description: "Desc1",
       numEmployees: 1,
       logoUrl: "http://c1.img",
+      jobs: [
+        {
+          id: expect.any(Number),
+          title: "Job1",
+          salary: 100000,
+          equity: "0",
+        },
+        {
+          id: expect.any(Number),
+          title: "Job2",
+          salary: 80000,
+          equity: "0.1",
+        },
+      ],
     });
   });
 

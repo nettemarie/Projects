@@ -7,12 +7,15 @@ const {
 } = require("../expressError");
 const db = require("../db.js");
 const User = require("./user.js");
+const Job = require("./job.js");
 const {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
 } = require("./_testCommon");
+
+let testJob;
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -108,7 +111,16 @@ describe("register", function () {
 /************************************** findAll */
 
 describe("findAll", function () {
+  const newjob = {
+    title: "Test Job",
+    salary: 75000,
+    equity: 0.1,
+    companyHandle: "c2",
+  };
+
   test("works", async function () {
+    let job = await Job.create(newjob);
+    await User.apply("u1", job.id);
     const users = await User.findAll();
     expect(users).toEqual([
       {
@@ -117,6 +129,7 @@ describe("findAll", function () {
         lastName: "U1L",
         email: "u1@email.com",
         isAdmin: false,
+        jobs: [job.id],
       },
       {
         username: "u2",
@@ -124,6 +137,7 @@ describe("findAll", function () {
         lastName: "U2L",
         email: "u2@email.com",
         isAdmin: false,
+        jobs: [],
       },
     ]);
   });
@@ -214,8 +228,7 @@ describe("update", function () {
 describe("remove", function () {
   test("works", async function () {
     await User.remove("u1");
-    const res = await db.query(
-        "SELECT * FROM users WHERE username='u1'");
+    const res = await db.query("SELECT * FROM users WHERE username='u1'");
     expect(res.rows.length).toEqual(0);
   });
 
@@ -225,6 +238,38 @@ describe("remove", function () {
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+/************************************** apply */
+
+describe("apply", function () {
+  const newjob = {
+    title: "Test Job",
+    salary: 75000,
+    equity: 0.1,
+    companyHandle: "c2",
+  };
+
+  test("works", async function () {
+    let job = await Job.create(newjob);
+    let application = await User.apply("u1", job.id);
+    expect(application).toEqual({ username: "u1", jobId: job.id });
+    const found = await db.query(
+      `SELECT * FROM applications WHERE username = 'u1' AND job_id = ${job.id}`
+    );
+    expect(found.rows.length).toEqual(1);
+  });
+
+  test("bad request with dup data", async function () {
+    let job = await Job.create(newjob);
+    try {
+      await User.apply("u1", job.id);
+      await User.apply("u1", job.id);
+      fail();
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
     }
   });
 });
