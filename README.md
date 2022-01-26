@@ -1,3 +1,3 @@
-# Springboard Projects
+# Projects
 
-A collection projects created while completing the Springboard curriculum.
+A collection of projects I've created throughout my coding journey!
