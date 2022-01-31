@@ -35,7 +35,7 @@ function getSqlWhereCompanyFilters(filter) {
   let sqlFilter = "";
   // If any filter exists, build WHERE Clause
   if (name || minEmployees || maxEmployees) {
-    // throw error if minEmployes > maxEmployees
+    // throw error if minEmployees > maxEmployees
     if (minEmployees && maxEmployees && minEmployees > maxEmployees) {
       throw new BadRequestError(
         `minEmployess cannot be greater than maxEmployees`
