@@ -144,7 +144,7 @@ const KeyboardKey = ({
 
   return (
     <button
-      value="test"
+      key={id}
       id={keyCode}
       className="drum-pad"
       onClick={() => play(key, id)}
@@ -207,7 +207,7 @@ const App = () => {
   const [sounds, setSounds] = React.useState(soundsGroup[soundType]);
 
   const styleActiveKey = (key) => {
-    key.parentElement.style.backgroundColor = "#000000";
+    key.parentElement.style.backgroundColor = "#550c18";
     key.parentElement.style.color = "#ffffff";
   };
 
@@ -263,6 +263,7 @@ const App = () => {
   return (
     <div id="drum-machine">
       {setKeyVolume()}
+      <h1 id="display-name"> Drum Machine </h1>
       <div className="wrapper">
         <Keyboard
           sounds={sounds}
@@ -270,6 +271,7 @@ const App = () => {
           power={power}
           deactivateAudio={deactivateAudio}
         />
+
         <DrumController
           stop={stop}
           power={power}

@@ -7,6 +7,20 @@ body {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+h1 {
+  animation: 2s fadein 1s infinite alternate-reverse;
+  color: #550c18;
+}
+
 h2 {
   font-size: 28px;
 }
@@ -84,8 +98,7 @@ h2 {
   transition: all 0.3s ease-in-out;
 }
 
-button:hover,
-.drum-pad:hover {
+.controller button:hover {
   color: white;
   background-color: #550c18;
 }
